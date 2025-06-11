@@ -79,22 +79,73 @@ const DiagnosisPage: React.FC = () => {
     }
   };
 
+  // キーボードナビゲーション対応
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (quizScreen !== 'questioning') return;
+
+    const currentQuestion = questions[currentQuestionIndex];
+    const currentAnswer = answers.find(a => a.questionId === currentQuestion?.id);
+
+    switch (event.key) {
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+        event.preventDefault();
+        const value = parseInt(event.key);
+        handleAnswerSelect(currentQuestion, value);
+        break;
+      case 'ArrowLeft':
+        event.preventDefault();
+        handlePreviousQuestion();
+        break;
+      case 'ArrowRight':
+      case 'Enter':
+        event.preventDefault();
+        if (currentAnswer) {
+          handleNextQuestion();
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        handleStartQuiz();
+        break;
+    }
+  }, [quizScreen, currentQuestionIndex, answers, handleAnswerSelect, handlePreviousQuestion, handleNextQuestion, handleStartQuiz]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   const runCareerMatching = useCallback((mbtiType: string) => {
-    if (!mbtiType) return;
+    if (!mbtiType) {
+      setError('MBTIタイプが正しく計算されませんでした。');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
-    setTimeout(() => { // Simulate API delay if needed, or remove for direct calculation
+
+    // Simulate API delay for better UX
+    setTimeout(() => {
       try {
         const userProfile: Partial<UserProfile> = { mbtiType };
         const matches = calculateCareerMatches(mbtiType, userProfile);
+
         if (matches.length === 0) {
-          setError(`「${mbtiType}」に対応する適職データが見つかりませんでした。`);
+          setError(`「${mbtiType}」に対応する適職データが見つかりませんでした。診断をやり直すか、しばらく時間をおいてから再度お試しください。`);
+          setCareerMatches([]);
+          setShowAIChat(false);
+        } else {
+          setCareerMatches(matches);
+          setShowAIChat(true);
         }
-        setCareerMatches(matches);
-        setShowAIChat(true); // Show AI Chat after career matches are loaded
       } catch (e) {
         console.error("Error calculating career matches:", e);
-        setError('診断結果の取得中にエラーが発生しました。');
+        const errorMessage = e instanceof Error ? e.message : '不明なエラーが発生しました';
+        setError(`診断結果の取得中にエラーが発生しました: ${errorMessage}`);
         setCareerMatches([]);
         setShowAIChat(false);
       } finally {
@@ -156,9 +207,16 @@ const DiagnosisPage: React.FC = () => {
 
     return (
       <div className="h-screen bg-slate-100 text-slate-800 flex flex-col safe-area-left safe-area-right safe-area-top safe-area-bottom">
+        {/* Screen reader announcements */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          質問 {currentQuestionIndex + 1} / {totalQuestions}: {currentQuestion.text}
+        </div>
+
         {/* Header with progress */}
         <div className="flex-shrink-0 p-3 bg-white border-b border-slate-200">
-          <p className="text-xs text-slate-500 mb-2 text-center">質問 {currentQuestionIndex + 1} / {totalQuestions}</p>
+          <p className="text-xs text-slate-500 mb-2 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
+            質問 {currentQuestionIndex + 1} / {totalQuestions}
+          </p>
           <div className="w-full bg-slate-200 rounded-full h-2">
             <div
               className="bg-blue-500 h-2 rounded-full mobile-transition"
@@ -167,31 +225,47 @@ const DiagnosisPage: React.FC = () => {
               aria-valuemin={0}
               aria-valuemax={100}
               role="progressbar"
-              aria-label={`進捗 ${Math.round(progressPercentage)}%`}
+              aria-label={`診断進捗 ${Math.round(progressPercentage)}%完了`}
             ></div>
           </div>
+          <p className="text-xs text-slate-400 text-center mt-1" aria-label="キーボードショートカット">
+            キーボード: 1-5で回答、←→で移動、Enterで次へ
+          </p>
         </div>
 
         {/* Main content area */}
         <div className="flex-1 flex flex-col justify-center p-4">
           <div className="w-full max-w-md mx-auto">
             {/* Question */}
-            <h2 className="text-base sm:text-lg font-semibold mb-6 text-slate-800 leading-relaxed text-center px-2">
+            <h2 id="question-text" className="text-base sm:text-lg font-semibold mb-6 text-slate-800 leading-relaxed text-center px-2">
               {currentQuestion.text}
             </h2>
 
             {/* Answer options */}
-            <div className="space-y-2 mb-6">
+            <div className="space-y-2 mb-6" role="radiogroup" aria-labelledby="question-text">
               {answerOptions.map(opt => (
                 <button
                   key={opt.value}
                   onClick={() => handleAnswerSelect(currentQuestion, opt.value)}
-                  className={`w-full text-left p-3 rounded-lg border-2 mobile-transition text-sm touch-target
+                  className={`w-full text-left p-3 rounded-lg border-2 mobile-transition text-sm touch-target flex justify-between items-center
                     ${currentAnswerValue === opt.value
                       ? 'bg-blue-600 border-blue-500 text-white mobile-shadow font-semibold'
                       : 'bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 text-slate-700'}`}
+                  role="radio"
+                  aria-checked={currentAnswerValue === opt.value}
+                  aria-describedby={`option-${opt.value}-shortcut`}
                 >
-                  {opt.label}
+                  <span>{opt.label}</span>
+                  <span
+                    id={`option-${opt.value}-shortcut`}
+                    className={`text-xs px-2 py-1 rounded ${
+                      currentAnswerValue === opt.value
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-slate-200 text-slate-500'
+                    }`}
+                  >
+                    {opt.value}
+                  </span>
                 </button>
               ))}
             </div>

@@ -1,0 +1,35 @@
+{
+  "name": "AI適職診断 | HUGAN",
+  "short_name": "適職診断",
+  "description": "AIを活用した適職診断で、あなたに最適なキャリアを見つけましょう。MBTIタイプに基づいた詳細な分析とアドバイスを提供します。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity", "business"],
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.svg",
+      "sizes": "1200x630",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "AI適職診断のメイン画面"
+    }
+  ]
+}
