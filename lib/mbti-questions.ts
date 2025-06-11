@@ -119,14 +119,40 @@ const INVERTED_QUESTION_IDS: Record<"EI" | "SN" | "TF" | "JP", number[]> = {
 
 
 export function calculateMBTIType(answers: Answer[]): MBTIResult {
+  console.log('🧮 Starting MBTI calculation with', answers.length, 'answers');
+
+  if (answers.length === 0) {
+    throw new Error('No answers provided for MBTI calculation');
+  }
+
+  if (answers.length !== 40) {
+    console.warn('⚠️ Expected 40 answers, got', answers.length);
+  }
+
   const dimensionScores: DimensionScores = {
     E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0,
   };
 
+  // Count answers per dimension for validation
+  const dimensionCounts = { EI: 0, SN: 0, TF: 0, JP: 0 };
+
   answers.forEach((answer) => {
     const { questionId, dimension, value } = answer;
+
+    if (!dimension || value === undefined || value === null) {
+      console.error('❌ Invalid answer:', answer);
+      throw new Error(`Invalid answer for question ${questionId}`);
+    }
+
+    if (value < 1 || value > 5) {
+      console.error('❌ Invalid answer value:', value, 'for question', questionId);
+      throw new Error(`Invalid answer value ${value} for question ${questionId}. Must be 1-5.`);
+    }
+
+    dimensionCounts[dimension]++;
+
     const score = value - 3; // Convert 1-5 scale to -2 to +2 (0 is neutral)
-    
+
     // Determine if the question is inverted for its dimension's primary trait
     const isCurrentQuestionInverted = INVERTED_QUESTION_IDS[dimension].includes(questionId);
 
@@ -170,6 +196,16 @@ export function calculateMBTIType(answers: Answer[]): MBTIResult {
     }
   });
 
+  console.log('📊 Dimension answer counts:', dimensionCounts);
+  console.log('📊 Final dimension scores:', dimensionScores);
+
+  // Validate that we have answers for all dimensions
+  Object.entries(dimensionCounts).forEach(([dimension, count]) => {
+    if (count === 0) {
+      throw new Error(`No answers found for dimension ${dimension}`);
+    }
+  });
+
   const preferences: Preferences = {
     EI: calculatePreferenceStrength(dimensionScores.E, dimensionScores.I, "E", "I"),
     SN: calculatePreferenceStrength(dimensionScores.S, dimensionScores.N, "S", "N"),
@@ -178,6 +214,16 @@ export function calculateMBTIType(answers: Answer[]): MBTIResult {
   };
 
   const type = preferences.EI.preference + preferences.SN.preference + preferences.TF.preference + preferences.JP.preference;
+
+  console.log('✅ MBTI calculation complete:', {
+    type,
+    preferences: {
+      EI: `${preferences.EI.preference} (${preferences.EI.strength.toFixed(1)}%)`,
+      SN: `${preferences.SN.preference} (${preferences.SN.strength.toFixed(1)}%)`,
+      TF: `${preferences.TF.preference} (${preferences.TF.strength.toFixed(1)}%)`,
+      JP: `${preferences.JP.preference} (${preferences.JP.strength.toFixed(1)}%)`
+    }
+  });
 
   return { type, preferences };
 }

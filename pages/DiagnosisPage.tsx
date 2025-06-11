@@ -29,16 +29,27 @@ const DiagnosisPage: React.FC = () => {
   const totalQuestions = questions.length;
 
   const resetQuizState = () => {
+    console.log('🔄 resetQuizState called, current quizScreen:', quizScreen);
+
+    // 結果画面表示中は状態をリセットしない（強力な保護機能）
+    if (quizScreen === 'results') {
+      console.log('⚠️ BLOCKING reset while on results screen');
+      return;
+    }
+
     setCurrentQuestionIndex(0);
     setAnswers([]);
     setMbtiResult(null);
     setCareerMatches([]);
     setError(null);
-    setShowAIChat(false); // Reset AI chat visibility
+    setShowAIChat(false);
+    console.log('✅ Quiz state reset completed');
   };
 
   useEffect(() => {
-    if (initiateQuizOnLoad && quizScreen !== 'questioning') {
+    // 結果画面では自動開始を無効化
+    if (initiateQuizOnLoad && quizScreen !== 'questioning' && quizScreen !== 'results') {
+      console.log('🎬 Auto-starting quiz due to initiateQuizOnLoad');
       resetQuizState();
       setQuizScreen('questioning');
     }
@@ -46,31 +57,62 @@ const DiagnosisPage: React.FC = () => {
 
 
   const handleStartQuiz = () => {
+    console.log('🎬 handleStartQuiz called, current quizScreen:', quizScreen);
+
     resetQuizState();
     setQuizScreen('questioning');
+    console.log('🎯 Quiz started/restarted');
   };
 
   const handleAnswerSelect = (question: Question, value: number) => {
     const newAnswer: Answer = { questionId: question.id, dimension: question.dimension, value };
+    console.log('📝 Answer selected:', {
+      questionId: question.id,
+      questionText: question.text,
+      dimension: question.dimension,
+      value,
+      currentQuestionIndex: currentQuestionIndex + 1
+    });
+
     setAnswers(prevAnswers => {
       const existingAnswerIndex = prevAnswers.findIndex(a => a.questionId === question.id);
+      let updatedAnswers;
+
       if (existingAnswerIndex > -1) {
-        const updatedAnswers = [...prevAnswers];
+        console.log('🔄 Updating existing answer for question', question.id);
+        updatedAnswers = [...prevAnswers];
         updatedAnswers[existingAnswerIndex] = newAnswer;
-        return updatedAnswers;
+      } else {
+        console.log('➕ Adding new answer for question', question.id);
+        updatedAnswers = [...prevAnswers, newAnswer];
       }
-      return [...prevAnswers, newAnswer];
+
+      console.log('📊 Updated answers array:', {
+        totalAnswers: updatedAnswers.length,
+        expectedTotal: totalQuestions,
+        isComplete: updatedAnswers.length === totalQuestions
+      });
+
+      return updatedAnswers;
     });
   };
 
   const handleNextQuestion = () => {
+    console.log('🔍 handleNextQuestion called:', {
+      currentQuestionIndex,
+      totalQuestions,
+      isLastQuestion: currentQuestionIndex === totalQuestions - 1,
+      answersCount: answers.length,
+      currentAnswers: answers.map(a => ({ questionId: a.questionId, value: a.value }))
+    });
+
     if (currentQuestionIndex < totalQuestions - 1) {
+      console.log('➡️ Moving to next question:', currentQuestionIndex + 1);
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
-      // 最後の質問の場合、結果画面に移行
-      const result = calculateMBTIType(answers);
-      setMbtiResult(result);
-      setQuizScreen('results');
+      console.log('🏁 Reached final question, will auto-transition via useEffect...');
+      // useEffectが40問完了を検知して自動的に結果画面に移行する
+      // ここでは何もしない（重複を避けるため）
     }
   };
   
@@ -110,7 +152,10 @@ const DiagnosisPage: React.FC = () => {
         break;
       case 'Escape':
         event.preventDefault();
-        handleStartQuiz();
+        // 結果画面では Escape キーでのリセットを無効化
+        if (quizScreen !== 'results') {
+          handleStartQuiz();
+        }
         break;
     }
   }, [quizScreen, currentQuestionIndex, answers, handleAnswerSelect, handlePreviousQuestion, handleNextQuestion, handleStartQuiz]);
@@ -121,45 +166,113 @@ const DiagnosisPage: React.FC = () => {
   }, [handleKeyDown]);
 
   const runCareerMatching = useCallback((mbtiType: string) => {
+    console.log('🎯 runCareerMatching called with:', mbtiType);
+
     if (!mbtiType) {
+      console.error('❌ No MBTI type provided to runCareerMatching');
       setError('MBTIタイプが正しく計算されませんでした。');
       return;
     }
 
+    console.log('🔄 Setting loading state for career matching');
     setIsLoading(true);
     setError(null);
 
     // Simulate API delay for better UX
     setTimeout(() => {
       try {
+        console.log('🧮 Calculating career matches for:', mbtiType);
         const userProfile: Partial<UserProfile> = { mbtiType };
         const matches = calculateCareerMatches(mbtiType, userProfile);
+        console.log('✅ Career matches calculated:', matches.length, 'matches found');
 
         if (matches.length === 0) {
+          console.log('⚠️ No career matches found for:', mbtiType);
           setError(`「${mbtiType}」に対応する適職データが見つかりませんでした。診断をやり直すか、しばらく時間をおいてから再度お試しください。`);
           setCareerMatches([]);
           setShowAIChat(false);
         } else {
+          console.log('🎉 Setting career matches and enabling AI chat');
           setCareerMatches(matches);
           setShowAIChat(true);
         }
       } catch (e) {
-        console.error("Error calculating career matches:", e);
+        console.error("❌ Error calculating career matches:", e);
         const errorMessage = e instanceof Error ? e.message : '不明なエラーが発生しました';
         setError(`診断結果の取得中にエラーが発生しました: ${errorMessage}`);
         setCareerMatches([]);
         setShowAIChat(false);
       } finally {
+        console.log('✅ Career matching completed, setting loading to false');
         setIsLoading(false);
       }
     }, 300);
   }, []);
 
+  // 40問すべてに回答した時の自動結果計算（安定版）
   useEffect(() => {
-    if (quizScreen === 'results' && mbtiResult) {
-      runCareerMatching(mbtiResult.type);
+    // 質問画面で、かつ40問すべてに回答済み、かつまだ結果が計算されていない場合のみ実行
+    if (quizScreen === 'questioning' && answers.length === totalQuestions && !mbtiResult) {
+      console.log('🎯 All questions answered, auto-transitioning to results...');
+
+      // 少し遅延を入れて状態の競合を避ける
+      const timer = setTimeout(() => {
+        try {
+          const result = calculateMBTIType(answers);
+          console.log('✅ Auto MBTI calculation successful:', result);
+
+          // 状態を一括で更新して競合を避ける
+          setMbtiResult(result);
+          setQuizScreen('results');
+          setIsLoading(true); // キャリアマッチング用のローディング状態
+          console.log('🎉 Auto-transitioned to results screen');
+
+          // キャリアマッチングを直接実行
+          setTimeout(() => {
+            try {
+              console.log('🧮 Calculating career matches for:', result.type);
+              const userProfile: Partial<UserProfile> = { mbtiType: result.type };
+              const matches = calculateCareerMatches(result.type, userProfile);
+              console.log('✅ Career matches calculated:', matches.length, 'matches found');
+
+              if (matches.length === 0) {
+                console.log('⚠️ No career matches found for:', result.type);
+                setError(`「${result.type}」に対応する適職データが見つかりませんでした。`);
+                setCareerMatches([]);
+                setShowAIChat(false);
+              } else {
+                console.log('🎉 Setting career matches and enabling AI chat');
+                setCareerMatches(matches);
+                setShowAIChat(true);
+              }
+            } catch (e) {
+              console.error("❌ Error calculating career matches:", e);
+              const errorMessage = e instanceof Error ? e.message : '不明なエラーが発生しました';
+              setError(`診断結果の取得中にエラーが発生しました: ${errorMessage}`);
+              setCareerMatches([]);
+              setShowAIChat(false);
+            } finally {
+              console.log('✅ Career matching completed, setting loading to false');
+              setIsLoading(false);
+            }
+          }, 500);
+        } catch (error) {
+          console.error('❌ Error in auto MBTI calculation:', error);
+          setError('診断結果の計算中にエラーが発生しました。診断をやり直してください。');
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
-  }, [quizScreen, mbtiResult, runCareerMatching]);
+  }, [answers.length, quizScreen, totalQuestions, mbtiResult]);
+
+  // キャリアマッチング用のuseEffectは無効化（上記のuseEffectで直接実行）
+  // useEffect(() => {
+  //   if (quizScreen === 'results' && mbtiResult && careerMatches.length === 0 && !isLoading && !error) {
+  //     console.log('🚀 Starting career matching for:', mbtiResult.type);
+  //     runCareerMatching(mbtiResult.type);
+  //   }
+  // }, [quizScreen, mbtiResult, careerMatches.length, isLoading, error, runCareerMatching]);
 
   const handleCareerSelect = (match: CareerMatch) => {
     setSelectedCareerForModal(match);
@@ -205,6 +318,14 @@ const DiagnosisPage: React.FC = () => {
   if (quizScreen === 'questioning') {
     const currentQuestion = questions[currentQuestionIndex];
     const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
+    console.log('🎯 Rendering questioning screen:', {
+      currentQuestionIndex,
+      questionId: currentQuestion?.id,
+      questionText: currentQuestion?.text,
+      progressPercentage,
+      answersCount: answers.length
+    });
 
     return (
       <div className="h-screen bg-slate-100 text-slate-800 flex flex-col safe-area-left safe-area-right safe-area-top safe-area-bottom">
@@ -285,8 +406,14 @@ const DiagnosisPage: React.FC = () => {
             </button>
             <div className="text-center">
               <button
-                onClick={handleStartQuiz}
+                onClick={() => {
+                  // 結果画面表示中は無効化
+                  if (quizScreen !== 'results') {
+                    handleStartQuiz();
+                  }
+                }}
                 className="text-xs text-slate-400 hover:text-slate-600 underline focus:outline-none"
+                disabled={quizScreen === 'results'}
               >
                 最初から
               </button>
@@ -305,6 +432,15 @@ const DiagnosisPage: React.FC = () => {
   }
   
   // Results Screen
+  console.log('🎉 Rendering results screen:', {
+    quizScreen,
+    mbtiResult,
+    answersCount: answers.length,
+    careerMatches: careerMatches.length,
+    isLoading,
+    error
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 p-3 sm:p-4 safe-area-left safe-area-right">
       <div className="container mx-auto max-w-4xl py-4 sm:py-6 md:py-8">
