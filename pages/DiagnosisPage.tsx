@@ -75,7 +75,7 @@ const DiagnosisPage: React.FC = () => {
   
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1); // This was prevIndex + 1, should be prevIndex -1
+      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
     }
   };
 
@@ -155,65 +155,76 @@ const DiagnosisPage: React.FC = () => {
     const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
     return (
-      <div className="min-h-screen bg-slate-100 text-slate-800 p-3 sm:p-4 flex flex-col items-center justify-center safe-area-left safe-area-right">
-        <div className="w-full max-w-lg bg-white p-4 sm:p-6 md:p-8 rounded-xl mobile-shadow-lg">
-          <div className="mb-6">
-            <p className="text-sm text-slate-500 mb-2 text-center">質問 {currentQuestionIndex + 1} / {totalQuestions}</p>
-            <div className="w-full bg-slate-200 rounded-full h-3">
-              <div
-                className="bg-blue-500 h-3 rounded-full mobile-transition"
-                style={{ width: `${progressPercentage}%` }}
-                aria-valuenow={progressPercentage}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                role="progressbar"
-                aria-label={`進捗 ${Math.round(progressPercentage)}%`}
-              ></div>
+      <div className="h-screen bg-slate-100 text-slate-800 flex flex-col safe-area-left safe-area-right safe-area-top safe-area-bottom">
+        {/* Header with progress */}
+        <div className="flex-shrink-0 p-3 bg-white border-b border-slate-200">
+          <p className="text-xs text-slate-500 mb-2 text-center">質問 {currentQuestionIndex + 1} / {totalQuestions}</p>
+          <div className="w-full bg-slate-200 rounded-full h-2">
+            <div
+              className="bg-blue-500 h-2 rounded-full mobile-transition"
+              style={{ width: `${progressPercentage}%` }}
+              aria-valuenow={progressPercentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              role="progressbar"
+              aria-label={`進捗 ${Math.round(progressPercentage)}%`}
+            ></div>
+          </div>
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col justify-center p-4">
+          <div className="w-full max-w-md mx-auto">
+            {/* Question */}
+            <h2 className="text-base sm:text-lg font-semibold mb-6 text-slate-800 leading-relaxed text-center px-2">
+              {currentQuestion.text}
+            </h2>
+
+            {/* Answer options */}
+            <div className="space-y-2 mb-6">
+              {answerOptions.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleAnswerSelect(currentQuestion, opt.value)}
+                  className={`w-full text-left p-3 rounded-lg border-2 mobile-transition text-sm touch-target
+                    ${currentAnswerValue === opt.value
+                      ? 'bg-blue-600 border-blue-500 text-white mobile-shadow font-semibold'
+                      : 'bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 text-slate-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
+        </div>
 
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 sm:mb-8 text-slate-800 leading-relaxed min-h-[4em] sm:min-h-[3.5em] flex items-center text-center justify-center px-2">
-            {currentQuestion.text}
-          </h2>
-
-          <div className="space-y-3 mb-8">
-            {answerOptions.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => handleAnswerSelect(currentQuestion, opt.value)}
-                className={`w-full text-left p-4 rounded-lg border-2 mobile-transition text-sm sm:text-base touch-target
-                  ${currentAnswerValue === opt.value
-                    ? 'bg-blue-600 border-blue-500 text-white mobile-shadow-lg scale-105 font-semibold'
-                    : 'bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 text-slate-700'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex justify-between items-center gap-3">
+        {/* Bottom navigation */}
+        <div className="flex-shrink-0 p-4 bg-white border-t border-slate-200">
+          <div className="flex justify-between items-center gap-3 max-w-md mx-auto">
             <button
               onClick={handlePreviousQuestion}
               disabled={currentQuestionIndex === 0}
-              className="py-3 px-5 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 touch-target"
+              className="py-3 px-4 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 touch-target text-sm"
             >
               戻る
             </button>
+            <div className="text-center">
+              <button
+                onClick={handleStartQuiz}
+                className="text-xs text-slate-400 hover:text-slate-600 underline focus:outline-none"
+              >
+                最初から
+              </button>
+            </div>
             <button
               onClick={handleNextQuestion}
               disabled={currentAnswerValue === undefined}
-              className="py-3 px-5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 touch-target"
+              className="py-3 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 touch-target text-sm"
             >
               {currentQuestionIndex === totalQuestions - 1 ? "結果を見る" : "次へ"}
             </button>
           </div>
         </div>
-         <button
-            onClick={handleStartQuiz}
-            className="mt-8 text-sm text-slate-500 hover:text-slate-700 underline focus:outline-none focus:ring-1 focus:ring-slate-500 rounded"
-          >
-            診断を最初からやり直す
-          </button>
       </div>
     );
   }
