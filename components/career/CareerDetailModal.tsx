@@ -31,7 +31,7 @@ const CareerDetailModal: React.FC<CareerDetailModalProps> = ({ match, isOpen, on
     { id: 'analysis', label: '適性分析', icon: '📊' }
   ] as const;
 
-  type TabId = typeof tabItems[number]['id'];
+
 
   return (
     <div

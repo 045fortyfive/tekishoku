@@ -201,34 +201,11 @@ function calculatePreferenceStrength(
   // This needs to be adjusted based on the actual number of questions per dimension.
   // For simplicity, let's use the sum of absolute scores as the basis for percentage.
   // This will represent "strength of preference" rather than absolute position on a scale.
-  
-  let preference: string;
-  let strengthPercentage: number;
-
-  if (score1 >= score2) {
-    preference = pole1;
-    // Strength is how much more score1 is than score2, relative to total magnitude
-    strengthPercentage = totalMagnitude === 0 ? 0 : ((score1 - score2) / totalMagnitude) * 100;
-     if (score1 === score2 && score1 === 0) strengthPercentage = 0; // Truly neutral
-     else if (score1 === score2 && score1 > 0) strengthPercentage = 0; // Balanced but not neutral
-     else if (totalMagnitude > 0 ) strengthPercentage = (score1 / totalMagnitude) * 100;
-
-
-  } else {
-    preference = pole2;
-    strengthPercentage = totalMagnitude === 0 ? 0 : ((score2 - score1) / totalMagnitude) * 100;
-    if (totalMagnitude > 0) strengthPercentage = (score2 / totalMagnitude) * 100;
-  }
-  
-  // Ensure strength is always positive and capped at 100
-  strengthPercentage = Math.max(0, Math.min(Math.abs(strengthPercentage), 100));
-
 
   if (score1 === 0 && score2 === 0) {
-    // truly neutral, very slight preference for pole1 by convention or assign randomly
+    // truly neutral, very slight preference for pole1 by convention
     return { preference: pole1, strength: 0, score1, score2 };
   }
-
 
   if (score1 >= score2) {
     return { preference: pole1, strength: totalMagnitude === 0 ? 50 : (score1 / totalMagnitude) * 100, score1, score2 };

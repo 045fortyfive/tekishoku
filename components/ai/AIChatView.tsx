@@ -97,7 +97,7 @@ const AIChatView: React.FC<AIChatViewProps> = ({ mbtiResult, careerMatches, onCh
 
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: finalAiText,
+        text: finalAiText || '',
         sender: 'ai',
         timestamp: new Date()
       };

@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { getAllCareers, getCareerById } from '../lib/career-data';
-import { MBTI_COMPATIBILITY, getMBTICompatibility } from '../lib/mbti-compatibility';
+import { getAllCareers } from '../lib/career-data';
+import { MBTI_COMPATIBILITY } from '../lib/mbti-compatibility';
 import { Link } from 'react-router-dom';
 import { BriefcaseIcon } from '../constants'; // Assuming an icon for general career page
 
