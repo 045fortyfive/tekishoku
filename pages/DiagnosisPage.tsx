@@ -67,6 +67,7 @@ const DiagnosisPage: React.FC = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
+      // 最後の質問の場合、結果画面に移行
       const result = calculateMBTIType(answers);
       setMbtiResult(result);
       setQuizScreen('results');
@@ -213,13 +214,13 @@ const DiagnosisPage: React.FC = () => {
         </div>
 
         {/* Header with progress */}
-        <div className="flex-shrink-0 p-3 bg-white border-b border-slate-200">
-          <p className="text-xs text-slate-500 mb-2 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
+        <div className="flex-shrink-0 px-4 py-2 bg-white border-b border-slate-200">
+          <p className="text-xs text-slate-500 mb-1 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
             質問 {currentQuestionIndex + 1} / {totalQuestions}
           </p>
-          <div className="w-full bg-slate-200 rounded-full h-2">
+          <div className="w-full bg-slate-200 rounded-full h-1.5">
             <div
-              className="bg-blue-500 h-2 rounded-full mobile-transition"
+              className="bg-blue-500 h-1.5 rounded-full mobile-transition"
               style={{ width: `${progressPercentage}%` }}
               aria-valuenow={progressPercentage}
               aria-valuemin={0}
@@ -234,20 +235,20 @@ const DiagnosisPage: React.FC = () => {
         </div>
 
         {/* Main content area */}
-        <div className="flex-1 flex flex-col justify-center p-4">
+        <div className="flex-1 flex flex-col justify-center px-4 py-2">
           <div className="w-full max-w-md mx-auto">
             {/* Question */}
-            <h2 id="question-text" className="text-base sm:text-lg font-semibold mb-6 text-slate-800 leading-relaxed text-center px-2">
+            <h2 id="question-text" className="text-base font-semibold mb-4 text-slate-800 leading-relaxed text-center">
               {currentQuestion.text}
             </h2>
 
             {/* Answer options */}
-            <div className="space-y-2 mb-6" role="radiogroup" aria-labelledby="question-text">
+            <div className="space-y-2" role="radiogroup" aria-labelledby="question-text">
               {answerOptions.map(opt => (
                 <button
                   key={opt.value}
                   onClick={() => handleAnswerSelect(currentQuestion, opt.value)}
-                  className={`w-full text-left p-3 rounded-lg border-2 mobile-transition text-sm touch-target flex justify-between items-center
+                  className={`w-full text-left p-2.5 rounded-lg border-2 mobile-transition text-sm touch-target flex justify-between items-center
                     ${currentAnswerValue === opt.value
                       ? 'bg-blue-600 border-blue-500 text-white mobile-shadow font-semibold'
                       : 'bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 text-slate-700'}`}
@@ -273,12 +274,12 @@ const DiagnosisPage: React.FC = () => {
         </div>
 
         {/* Bottom navigation */}
-        <div className="flex-shrink-0 p-4 bg-white border-t border-slate-200">
+        <div className="flex-shrink-0 px-4 py-3 bg-white border-t border-slate-200">
           <div className="flex justify-between items-center gap-3 max-w-md mx-auto">
             <button
               onClick={handlePreviousQuestion}
               disabled={currentQuestionIndex === 0}
-              className="py-3 px-4 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 touch-target text-sm"
+              className="py-2.5 px-3 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 touch-target text-sm"
             >
               戻る
             </button>
@@ -293,7 +294,7 @@ const DiagnosisPage: React.FC = () => {
             <button
               onClick={handleNextQuestion}
               disabled={currentAnswerValue === undefined}
-              className="py-3 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 touch-target text-sm"
+              className="py-2.5 px-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 touch-target text-sm"
             >
               {currentQuestionIndex === totalQuestions - 1 ? "結果を見る" : "次へ"}
             </button>
