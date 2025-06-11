@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="AIを活用した適職診断で、あなたに最適なキャリアを見つけましょう。MBTIタイプに基づいた詳細な分析とアドバイスを提供します。">
+  <meta name="keywords" content="適職診断,AI,キャリア,MBTI,転職,就職活動">
+  <meta name="author" content="HUGAN">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="適職診断">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <title>AI適職診断 | HUGAN</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Hiragino Kaku Gothic W4', 'ヒラギノ角ゴ Pro W4', 'Hiragino Sans', Meiryo, 'メイリオ', Osaka, 'MS PGothic', 'ＭＳ Ｐゴシック', sans-serif;
+      overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile */
+      -webkit-touch-callout: none; /* Disable callout on iOS */
+      -webkit-user-select: none; /* Disable text selection on iOS */
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+      touch-action: manipulation; /* Improve touch responsiveness */
+    }
+    .mincho-font { /* Specific Mincho style for designated elements */
+      font-family: 'Hiragino Mincho ProN', 'MS Mincho', serif;
+    }
+    /* Custom scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1; /* slate-300 */
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8; /* slate-400 */
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.1.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.1.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.25.1",
+    "framer-motion": "https://esm.sh/framer-motion@11.3.8",
+    "@google/genai": "https://esm.sh/@google/genai@0.14.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-100 text-slate-900">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

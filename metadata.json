@@ -1,0 +1,5 @@
+{
+  "name": "AI Career Aptitude Diagnosis",
+  "description": "An application to help users find suitable careers based on their MBTI type. It provides detailed career information and compatibility analysis.",
+  "requestFramePermissions": []
+}

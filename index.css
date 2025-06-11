@@ -1,0 +1,199 @@
+/* Mobile-first responsive design optimizations */
+
+/* Base mobile styles */
+@media (max-width: 480px) {
+  /* Ensure proper touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Optimize text sizes for mobile */
+  .text-xs { font-size: 0.75rem; }
+  .text-sm { font-size: 0.875rem; }
+  .text-base { font-size: 1rem; }
+  .text-lg { font-size: 1.125rem; }
+  .text-xl { font-size: 1.25rem; }
+  .text-2xl { font-size: 1.5rem; }
+  .text-3xl { font-size: 1.875rem; }
+  .text-4xl { font-size: 2.25rem; }
+  
+  /* Improve spacing for mobile */
+  .p-1 { padding: 0.25rem; }
+  .p-2 { padding: 0.5rem; }
+  .p-3 { padding: 0.75rem; }
+  .p-4 { padding: 1rem; }
+  .p-5 { padding: 1.25rem; }
+  .p-6 { padding: 1.5rem; }
+  
+  .m-1 { margin: 0.25rem; }
+  .m-2 { margin: 0.5rem; }
+  .m-3 { margin: 0.75rem; }
+  .m-4 { margin: 1rem; }
+  .m-5 { margin: 1.25rem; }
+  .m-6 { margin: 1.5rem; }
+}
+
+/* Specific mobile optimizations for common elements */
+@media (max-width: 414px) {
+  /* Navigation optimizations */
+  .bottom-nav-item {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  /* Button optimizations */
+  .mobile-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  /* Card optimizations */
+  .mobile-card {
+    padding: 1rem;
+    margin: 0.5rem;
+    border-radius: 0.75rem;
+  }
+  
+  /* Modal optimizations */
+  .mobile-modal {
+    margin: 0.75rem;
+    max-height: calc(100vh - 1.5rem);
+  }
+}
+
+/* Touch-friendly interactions */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Improved scrolling for mobile */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Safe area handling for devices with notches */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .safe-area-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Loading states optimized for mobile */
+.mobile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+/* Error states optimized for mobile */
+.mobile-error {
+  padding: 1rem;
+  text-align: center;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #dc2626;
+}
+
+/* Success states optimized for mobile */
+.mobile-success {
+  padding: 1rem;
+  text-align: center;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  color: #16a34a;
+}
+
+/* Accessibility improvements for mobile */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Dark mode considerations (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-ready {
+    /* Placeholder for future dark mode styles */
+  }
+}
+
+/* Focus styles for keyboard navigation on mobile */
+.focus-visible:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Prevent zoom on input focus (iOS) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Optimize for landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .landscape-optimize {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .landscape-hide {
+    display: none;
+  }
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Smooth animations for mobile */
+.mobile-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Optimized shadows for mobile */
+.mobile-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-shadow-lg {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
