@@ -327,31 +327,23 @@ const DiagnosisPage: React.FC = () => {
       answersCount: answers.length
     });
 
-    // モバイルでのスクロール防止
-    React.useEffect(() => {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
-      };
-    }, []);
+    // 固定ナビゲーションのため、bodyのoverflow制御は不要
 
     return (
-      <div className="h-screen bg-slate-100 text-slate-800 flex flex-col safe-area-left safe-area-right safe-area-top safe-area-bottom overflow-hidden">
+      <div className="h-screen bg-slate-100 text-slate-800 flex flex-col safe-area-left safe-area-right safe-area-top safe-area-bottom overflow-hidden relative">
         {/* Screen reader announcements */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           質問 {currentQuestionIndex + 1} / {totalQuestions}: {currentQuestion.text}
         </div>
 
-        {/* Header with progress - Ultra-compact for mobile */}
-        <div className="flex-shrink-0 px-3 py-0.5 bg-white border-b border-slate-200">
-          <p className="text-xs text-slate-500 mb-0.5 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
+        {/* Header with progress - Compact for mobile */}
+        <div className="flex-shrink-0 px-4 py-2 bg-white border-b border-slate-200">
+          <p className="text-sm text-slate-500 mb-1 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
             質問 {currentQuestionIndex + 1} / {totalQuestions}
           </p>
-          <div className="w-full bg-slate-200 rounded-full h-0.5">
+          <div className="w-full bg-slate-200 rounded-full h-1">
             <div
-              className="bg-blue-500 h-0.5 rounded-full mobile-transition"
+              className="bg-blue-500 h-1 rounded-full mobile-transition"
               style={{ width: `${progressPercentage}%` }}
               aria-valuenow={progressPercentage}
               aria-valuemin={0}
@@ -360,26 +352,26 @@ const DiagnosisPage: React.FC = () => {
               aria-label={`診断進捗 ${Math.round(progressPercentage)}%完了`}
             ></div>
           </div>
-          <p className="text-xs text-slate-400 text-center mt-0.5" aria-label="キーボードショートカット">
+          <p className="text-xs text-slate-400 text-center mt-1" aria-label="キーボードショートカット">
             1-5で回答、←→で移動、Enterで次へ
           </p>
         </div>
 
-        {/* Main content area - Ultra-compact for mobile */}
-        <div className="flex-1 flex flex-col justify-center px-3">
-          <div className="w-full max-w-sm mx-auto">
+        {/* Main content area - Scrollable content */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 pb-20">
+          <div className="w-full max-w-md mx-auto flex flex-col justify-center min-h-full">
             {/* Question */}
-            <h2 id="question-text" className="text-xs font-medium mb-1 text-slate-800 leading-tight text-center">
+            <h2 id="question-text" className="text-base font-semibold mb-4 text-slate-800 leading-relaxed text-center">
               {currentQuestion.text}
             </h2>
 
             {/* Answer options */}
-            <div className="space-y-0.5" role="radiogroup" aria-labelledby="question-text">
+            <div className="space-y-2" role="radiogroup" aria-labelledby="question-text">
               {answerOptions.map(opt => (
                 <button
                   key={opt.value}
                   onClick={() => handleAnswerSelect(currentQuestion, opt.value)}
-                  className={`w-full text-left px-2 py-0.5 rounded-lg border-2 mobile-transition text-xs flex justify-between items-center min-h-[44px]
+                  className={`w-full text-left px-3 py-3 rounded-lg border-2 mobile-transition text-sm flex justify-between items-center min-h-[44px]
                     ${currentAnswerValue === opt.value
                       ? 'bg-blue-600 border-blue-500 text-white mobile-shadow font-semibold'
                       : 'bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 text-slate-700'}`}
@@ -387,10 +379,10 @@ const DiagnosisPage: React.FC = () => {
                   aria-checked={currentAnswerValue === opt.value}
                   aria-describedby={`option-${opt.value}-shortcut`}
                 >
-                  <span className="flex-1 pr-2 leading-tight">{opt.label}</span>
+                  <span className="flex-1 pr-3 leading-relaxed">{opt.label}</span>
                   <span
                     id={`option-${opt.value}-shortcut`}
-                    className={`text-xs px-1.5 py-0.5 rounded flex-shrink-0 ${
+                    className={`text-xs px-2 py-1 rounded flex-shrink-0 ${
                       currentAnswerValue === opt.value
                         ? 'bg-blue-500 text-white'
                         : 'bg-slate-200 text-slate-500'
@@ -404,13 +396,13 @@ const DiagnosisPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom navigation - Ultra-compact for mobile */}
-        <div className="flex-shrink-0 px-3 py-1 bg-white border-t border-slate-200">
-          <div className="flex justify-between items-center gap-2 max-w-sm mx-auto">
+        {/* Fixed Bottom navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 safe-area-bottom z-10">
+          <div className="flex justify-between items-center gap-3 max-w-md mx-auto">
             <button
               onClick={handlePreviousQuestion}
               disabled={currentQuestionIndex === 0}
-              className="py-1.5 px-2.5 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 min-h-[44px] min-w-[44px] text-sm"
+              className="py-3 px-4 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 min-h-[44px] min-w-[44px] text-sm font-medium"
             >
               戻る
             </button>
@@ -422,7 +414,7 @@ const DiagnosisPage: React.FC = () => {
                     handleStartQuiz();
                   }
                 }}
-                className="text-xs text-slate-400 hover:text-slate-600 underline focus:outline-none py-1"
+                className="text-xs text-slate-400 hover:text-slate-600 underline focus:outline-none py-2"
                 disabled={quizScreen === 'results'}
               >
                 最初から
@@ -431,7 +423,7 @@ const DiagnosisPage: React.FC = () => {
             <button
               onClick={handleNextQuestion}
               disabled={currentAnswerValue === undefined}
-              className="py-1.5 px-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 min-h-[44px] min-w-[44px] text-sm"
+              className="py-3 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed mobile-transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 min-h-[44px] min-w-[44px] text-sm"
             >
               {currentQuestionIndex === totalQuestions - 1 ? "結果を見る" : "次へ"}
             </button>
