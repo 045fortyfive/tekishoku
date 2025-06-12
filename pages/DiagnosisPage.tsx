@@ -109,16 +109,32 @@ const DiagnosisPage: React.FC = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
       console.log('➡️ Moving to next question:', currentQuestionIndex + 1);
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+
+      // 次の質問に移動時、適切なスクロール位置に調整
+      setTimeout(() => {
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+          mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 50);
     } else {
       console.log('🏁 Reached final question, will auto-transition via useEffect...');
       // useEffectが40問完了を検知して自動的に結果画面に移行する
       // ここでは何もしない（重複を避けるため）
     }
   };
-  
+
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+
+      // 前の質問に戻る時、適切なスクロール位置に調整
+      setTimeout(() => {
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+          mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 50);
     }
   };
 
@@ -227,6 +243,11 @@ const DiagnosisPage: React.FC = () => {
           setIsLoading(true); // キャリアマッチング用のローディング状態
           console.log('🎉 Auto-transitioned to results screen');
 
+          // 結果画面表示時にページトップにスクロール
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 100);
+
           // キャリアマッチングを直接実行
           setTimeout(() => {
             try {
@@ -265,6 +286,14 @@ const DiagnosisPage: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [answers.length, quizScreen, totalQuestions, mbtiResult]);
+
+  // 結果画面表示時のスクロール制御
+  useEffect(() => {
+    if (quizScreen === 'results') {
+      // 結果画面に遷移した際は必ずページトップにスクロール
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [quizScreen]);
 
   // キャリアマッチング用のuseEffectは無効化（上記のuseEffectで直接実行）
   // useEffect(() => {
@@ -337,7 +366,7 @@ const DiagnosisPage: React.FC = () => {
         </div>
 
         {/* Header with progress - Compact for mobile */}
-        <div className="flex-shrink-0 px-4 py-2 bg-white border-b border-slate-200">
+        <div className="flex-shrink-0 px-4 py-1.5 bg-white border-b border-slate-200">
           <p className="text-sm text-slate-500 mb-1 text-center" aria-label={`質問 ${currentQuestionIndex + 1} / ${totalQuestions}`}>
             質問 {currentQuestionIndex + 1} / {totalQuestions}
           </p>
@@ -352,18 +381,20 @@ const DiagnosisPage: React.FC = () => {
               aria-label={`診断進捗 ${Math.round(progressPercentage)}%完了`}
             ></div>
           </div>
-          <p className="text-xs text-slate-400 text-center mt-1" aria-label="キーボードショートカット">
+          <p className="text-xs text-slate-400 text-center mt-0.5" aria-label="キーボードショートカット">
             1-5で回答、←→で移動、Enterで次へ
           </p>
         </div>
 
         {/* Main content area - Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 pb-20">
-          <div className="w-full max-w-md mx-auto flex flex-col justify-center min-h-full">
-            {/* Question */}
-            <h2 id="question-text" className="text-base font-semibold mb-4 text-slate-800 leading-relaxed text-center">
-              {currentQuestion.text}
-            </h2>
+        <div className="flex-1 overflow-y-auto px-4 py-1 pb-20" id="main-content">
+          <div className="w-full max-w-md mx-auto">
+            {/* Question - Fixed height container for 2 lines */}
+            <div className="h-20 flex items-center justify-center mb-3">
+              <h2 id="question-text" className="text-base font-semibold text-slate-800 leading-snug text-center px-2 max-w-full">
+                {currentQuestion.text}
+              </h2>
+            </div>
 
             {/* Answer options */}
             <div className="space-y-2" role="radiogroup" aria-labelledby="question-text">
