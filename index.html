@@ -66,19 +66,297 @@
   }
   </script>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: 'Hiragino Kaku Gothic W4', 'ヒラギノ角ゴ Pro W4', 'Hiragino Sans', Meiryo, 'メイリオ', Osaka, 'MS PGothic', 'ＭＳ Ｐゴシック', sans-serif;
+      font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic W4', 'ヒラギノ角ゴ Pro W4', 'Hiragino Sans', Meiryo, 'メイリオ', Osaka, 'MS PGothic', 'ＭＳ Ｐゴシック', sans-serif;
       overscroll-behavior-y: none; /* Prevents pull-to-refresh on mobile */
       -webkit-touch-callout: none; /* Disable callout on iOS */
       -webkit-user-select: none; /* Disable text selection on iOS */
+      user-select: none; /* Standard property for compatibility */
       -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
       touch-action: manipulation; /* Improve touch responsiveness */
     }
-    .mincho-font { /* Specific Mincho style for designated elements */
-      font-family: 'Hiragino Mincho ProN', 'MS Mincho', serif;
+
+    /* 赤・オレンジ・黄色のグラデーションアニメーション */
+    @keyframes warm-gradient-1 {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.15;
+      }
+      50% {
+        transform: translate(-45%, -55%) scale(1.05);
+        opacity: 0.25;
+      }
     }
+
+    @keyframes warm-gradient-2 {
+      0%, 100% {
+        transform: translate(50%, 50%) scale(1);
+        opacity: 0.12;
+      }
+      50% {
+        transform: translate(55%, 45%) scale(1.03);
+        opacity: 0.22;
+      }
+    }
+
+    @keyframes warm-gradient-3 {
+      0%, 100% {
+        transform: translate(0%, 100%) scale(1);
+        opacity: 0.1;
+      }
+      50% {
+        transform: translate(5%, 95%) scale(1.02);
+        opacity: 0.18;
+      }
+    }
+
+    .warm-gradient-1 {
+      animation: warm-gradient-1 35s ease-in-out infinite;
+    }
+
+    .warm-gradient-2 {
+      animation: warm-gradient-2 45s ease-in-out infinite;
+    }
+
+    .warm-gradient-3 {
+      animation: warm-gradient-3 55s ease-in-out infinite;
+    }
+
+    /* ミニマルなタイトルスタイル */
+    .zen-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: #2d3748;
+    }
+
+    /* AI適職診断タイトル用の太字スタイル */
+    .diagnosis-title {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #2d3748;
+    }
+
+    /* SVGフィルター定義 */
+    .liquid-glass-filter {
+      filter: url(#liquid-glass-distortion);
+    }
+
+    /* 青色グラデーションボタン（診断を始める） */
+    .blue-gradient-button {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border: none;
+      color: white;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Noto Sans JP', sans-serif;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 4px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .blue-gradient-button:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Liquid Glassボタン（その他のボタン） */
+    .liquid-glass-button {
+      position: relative;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: #374151;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .liquid-glass-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: inherit;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+        0 4px 8px rgba(0, 0, 0, 0.1);
+      filter: url(#liquid-glass-distortion);
+      z-index: -1;
+    }
+
+    .liquid-glass-button:hover::before {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+        0 8px 25px rgba(255, 255, 255, 0.3);
+    }
+
+    .liquid-glass-button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Liquid Glassカード */
+    .liquid-glass-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .liquid-glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: inherit;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+        0 8px 32px rgba(0, 0, 0, 0.1);
+      filter: url(#liquid-glass-distortion);
+      z-index: -1;
+    }
+
+    /* 文字の可読性を保つためのスタイル */
+    .liquid-glass-button > *,
+    .liquid-glass-card > * {
+      position: relative;
+      z-index: 1;
+      filter: none;
+    }
+
+    /* テキストシャドウで可読性を向上 */
+    .glass-text {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* スマホ最適化 - スクロールレス */
+    @media (max-width: 640px) {
+      .mobile-container {
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1rem 0.75rem 0.5rem;
+      }
+
+      .mobile-header {
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+      }
+
+      .mobile-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 0;
+      }
+
+      .mobile-footer {
+        flex-shrink: 0;
+        margin-top: 1rem;
+      }
+
+      .diagnosis-title {
+        font-size: 1.5rem !important;
+        line-height: 1.2;
+        margin-bottom: 0.75rem !important;
+      }
+
+      .liquid-glass-card {
+        padding: 1.25rem !important;
+        margin-bottom: 1.25rem !important;
+      }
+
+      .liquid-glass-button, .blue-gradient-button {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .button-spacing {
+        gap: 0.5rem !important;
+      }
+
+      .warm-gradient-1, .warm-gradient-2, .warm-gradient-3 {
+        width: 70vw !important;
+        height: 70vw !important;
+      }
+
+      .zen-title {
+        font-size: 1.25rem !important;
+      }
+
+      .zen-spacing {
+        margin: 0.75rem 0 !important;
+      }
+
+      .mobile-description {
+        font-size: 0.875rem !important;
+        line-height: 1.4;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .mobile-container {
+        padding: 0.75rem 0.5rem 0.25rem;
+      }
+
+      .diagnosis-title {
+        font-size: 1.375rem !important;
+      }
+
+      .liquid-glass-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+      }
+
+      .liquid-glass-button, .blue-gradient-button {
+        padding: 0.625rem 0.875rem !important;
+        font-size: 0.85rem;
+      }
+
+      .zen-title {
+        font-size: 1.125rem !important;
+      }
+
+      .mobile-description {
+        font-size: 0.8rem !important;
+      }
+    }
+
+    /* 余白と間を重視したレイアウト */
+    .zen-spacing {
+      margin: 1.5rem 0;
+    }
+
+    @media (min-width: 640px) {
+      .zen-spacing {
+        margin: 2rem 0;
+      }
+    }
+
     /* Custom scrollbar for webkit browsers */
     ::-webkit-scrollbar {
       width: 8px;
@@ -112,6 +390,17 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body class="bg-slate-100 text-slate-900">
+  <!-- SVG Liquid Glass Filter -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="liquid-glass-distortion" x="-50%" y="-50%" width="200%" height="200%">
+        <feTurbulence baseFrequency="0.02 0.02" numOctaves="3" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+        <feGaussianBlur stdDeviation="0.5"/>
+      </filter>
+    </defs>
+  </svg>
+
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
