@@ -29,19 +29,31 @@ const HomePage: React.FC = () => {
           className="text-center zen-spacing mobile-header"
           data-oid="c45q76y"
         >
-          <h1
-            className="text-xl sm:text-2xl md:text-3xl zen-title mb-2"
-            data-oid="o02abq6"
-          >
-            HUGAN
-          </h1>
+          <div className="flex justify-center mb-2" data-oid="2_cj48.">
+            <img
+              src="/image/hugan-logo.avif"
+              alt="HUGAN"
+              className="h-8 sm:h-10 md:h-12 block sm:hidden"
+              data-oid="hugan-logo-mobile"
+            />
+
+            <h1
+              className="text-xl sm:text-2xl md:text-3xl zen-title hidden sm:block"
+              data-oid="o02abq6"
+            >
+              HUGAN
+            </h1>
+          </div>
           <div
             className="w-8 sm:w-12 h-px bg-gray-300 mx-auto"
             data-oid="e86rwfq"
           ></div>
         </header>
 
-        <main className="w-full zen-spacing mobile-main" data-oid="yf._t35">
+        <main
+          className="w-full zen-spacing mobile-main mt-2 sm:mt-6"
+          data-oid="yf._t35"
+        >
           <div
             className="text-center liquid-glass-card p-6 sm:p-8 mb-6 sm:mb-8 rounded-2xl"
             data-oid="ykl5k-_"
