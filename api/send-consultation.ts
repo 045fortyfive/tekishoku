@@ -27,20 +27,32 @@ export default async function handler(
     }
 
     // メール送信設定
-    // 環境変数からSMTP設定を取得（設定されていない場合はデフォルト値を使用）
+    // 環境変数からSMTP設定を取得
+    // SMTP_PASSWORDとSMTP_PASSの両方に対応
+    const smtpPassword = process.env.SMTP_PASSWORD || process.env.SMTP_PASS || '';
+    const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER || '';
+    
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      host: process.env.SMTP_HOST || 'smtp.office365.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports (587)
       auth: {
-        user: process.env.SMTP_USER || '',
-        pass: process.env.SMTP_PASS || '',
+        user: smtpUser,
+        pass: smtpPassword,
+      },
+      // Office365用の追加設定
+      tls: {
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false, // 証明書検証を無効化（必要に応じて）
       },
     });
 
+    // 送信元メールアドレス（MAIL_FROMがあれば使用、なければSMTP_USERを使用）
+    const fromAddress = process.env.MAIL_FROM || smtpUser || 'noreply@tekishoku.vercel.app';
+
     // メール内容
     const mailOptions = {
-      from: process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@tekishoku.vercel.app',
+      from: fromAddress,
       to: email, // 申込者のメールアドレス
       bcc: 'info@hugan.co.jp', // Bccにinfo@hugan.co.jpを設定
       subject: `【適職診断】面談申込 - ${name}様`,
