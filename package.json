@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google/genai": "0.14.0",
+    "@sendgrid/mail": "^8.1.6",
     "@types/nodemailer": "^7.0.4",
     "@vercel/node": "^5.5.15",
     "framer-motion": "11.3.8",
