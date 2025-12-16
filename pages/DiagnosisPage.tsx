@@ -29,9 +29,10 @@ const DiagnosisPage: React.FC = () => {
   const [selectedCareerForModal, setSelectedCareerForModal] =
     useState<CareerMatch | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isSubmittingForm, setIsSubmittingForm] = useState<boolean>(false);
-  const [formSubmitError, setFormSubmitError] = useState<string | null>(null);
-  const [formSubmitSuccess, setFormSubmitSuccess] = useState<boolean>(false);
+  // フォーム関連の状態 - 一時的にコメントアウト
+  // const [isSubmittingForm, setIsSubmittingForm] = useState<boolean>(false);
+  // const [formSubmitError, setFormSubmitError] = useState<string | null>(null);
+  // const [formSubmitSuccess, setFormSubmitSuccess] = useState<boolean>(false);
 
   const totalQuestions = questions.length;
 
@@ -320,6 +321,8 @@ const DiagnosisPage: React.FC = () => {
     setSelectedCareerForModal(null);
   };
 
+  // フォーム送信処理 - 一時的にコメントアウト
+  /*
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmittingForm(true);
@@ -367,6 +370,7 @@ const DiagnosisPage: React.FC = () => {
       setIsSubmittingForm(false);
     }
   };
+  */
 
   const currentAnswerValue = answers.find(
     (a) => a.questionId === questions[currentQuestionIndex]?.id,
@@ -644,7 +648,8 @@ const DiagnosisPage: React.FC = () => {
                 </a>
               </div>
 
-              {/* Application Form */}
+              {/* Application Form - 一時的にコメントアウト */}
+              {/* 
               <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
                 <h3 className="text-lg sm:text-xl font-semibold text-slate-800 mb-4 text-center">
                   面談申込フォーム
@@ -769,6 +774,7 @@ const DiagnosisPage: React.FC = () => {
                   </button>
                 </form>
               </div>
+              */}
             </div>
           )}
 
