@@ -37,7 +37,9 @@ const AppContent: React.FC = () => {
 
             <Route
               path="/diagnosis/short"
-              element={<DiagnosisPage questionSet={shortQuestions} />}
+              element={
+                <DiagnosisPage questionSet={shortQuestions} showLineButton={false} />
+              }
             />
 
             <Route
