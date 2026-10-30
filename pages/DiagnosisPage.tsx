@@ -11,7 +11,9 @@ import {
 import { calculateCareerMatches } from "../lib/career-matching";
 import { CareerMatchResult, CareerDetailModal } from "../components/career";
 
-const DiagnosisPage: React.FC = () => {
+const DiagnosisPage: React.FC<{ questionSet?: Question[] }> = ({
+  questionSet = questions,
+}) => {
   const [searchParams] = useSearchParams();
   const initiateQuizOnLoad = searchParams.get("initiate") === "true";
 
@@ -34,7 +36,7 @@ const DiagnosisPage: React.FC = () => {
   // const [formSubmitError, setFormSubmitError] = useState<string | null>(null);
   // const [formSubmitSuccess, setFormSubmitSuccess] = useState<boolean>(false);
 
-  const totalQuestions = questions.length;
+  const totalQuestions = questionSet.length;
 
   const resetQuizState = () => {
     console.log("🔄 resetQuizState called, current quizScreen:", quizScreen);
@@ -164,7 +166,7 @@ const DiagnosisPage: React.FC = () => {
     (event: KeyboardEvent) => {
       if (quizScreen !== "questioning") return;
 
-      const currentQuestion = questions[currentQuestionIndex];
+      const currentQuestion = questionSet[currentQuestionIndex];
       const currentAnswer = answers.find(
         (a) => a.questionId === currentQuestion?.id,
       );
@@ -203,6 +205,7 @@ const DiagnosisPage: React.FC = () => {
       quizScreen,
       currentQuestionIndex,
       answers,
+      questionSet,
       handleAnswerSelect,
       handlePreviousQuestion,
       handleNextQuestion,
@@ -373,7 +376,7 @@ const DiagnosisPage: React.FC = () => {
   */
 
   const currentAnswerValue = answers.find(
-    (a) => a.questionId === questions[currentQuestionIndex]?.id,
+    (a) => a.questionId === questionSet[currentQuestionIndex]?.id,
   )?.value;
 
   const answerOptions = [
@@ -404,7 +407,7 @@ const DiagnosisPage: React.FC = () => {
   }
 
   if (quizScreen === "questioning") {
-    const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = questionSet[currentQuestionIndex];
     const progressPercentage =
       ((currentQuestionIndex + 1) / totalQuestions) * 100;
 

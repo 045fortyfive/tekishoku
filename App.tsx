@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import DiagnosisPage from "./pages/DiagnosisPage";
+import { shortQuestions } from "./lib/mbti-questions";
 import CareerPage from "./pages/CareerPage";
 import MyPage from "./pages/MyPage"; // MyPage is not in NAV_ITEMS but route can exist
 import ConsultationPage from "./pages/ConsultationPage";
@@ -32,6 +33,11 @@ const AppContent: React.FC = () => {
               path="/diagnosis"
               element={<DiagnosisPage data-oid="v2g1w0c" />}
               data-oid="p:q5eig"
+            />
+
+            <Route
+              path="/diagnosis/short"
+              element={<DiagnosisPage questionSet={shortQuestions} />}
             />
 
             <Route

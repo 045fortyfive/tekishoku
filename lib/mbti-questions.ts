@@ -59,21 +59,21 @@ export const questions: Question[] = [
 ];
 
 
-// Reduced number of questions for quicker testing
-// export const questions: Question[] = [
-//     // E/I Questions (High score = E, Low score = I)
-//     { id: 1, text: "大人数のパーティーや集まりに参加した後、エネルギーが満たされた感じがする", dimension: "EI" },
-//     { id: 2, text: "長時間の社交の後は、一人で過ごす時間が必要だと感じる", dimension: "EI" }, 
-//     // S/N Questions (High score = S, Low score = N)
-//     { id: 11, text: "会話で細部よりも全体的な概念や意味に注目する", dimension: "SN" }, 
-//     { id: 12, text: "問題を解決するとき、実証済みの方法を好む", dimension: "SN" },
-//     // T/F Questions (High score = T, Low score = F)
-//     { id: 21, text: "決断をするとき、人々の感情よりも論理的な分析を重視する", dimension: "TF" },
-//     { id: 22, text: "議論において、調和を保つより真実を追求することを重視する", dimension: "TF" },
-//     // J/P Questions (High score = J, Low score = P)
-//     { id: 31, text: "予定や計画を事前に立てることを好む", dimension: "JP" },
-//     { id: 32, text: "締め切り直前よりも早めに作業を完了させたい", dimension: "JP" },
-// ];
+// 簡易版: 各次元2問・全8問。IDはフル版と共通のため INVERTED_QUESTION_IDS がそのまま適用される
+export const shortQuestions: Question[] = [
+  // E/I Questions (High score = E, Low score = I)
+  { id: 1, text: "大人数のパーティーや集まりに参加した後、エネルギーが満たされた感じがする", dimension: "EI" },
+  { id: 2, text: "長時間の社交の後は、一人で過ごす時間が必要だと感じる", dimension: "EI" }, // Inverted
+  // S/N Questions (High score = S, Low score = N)
+  { id: 11, text: "会話で細部よりも全体的な概念や意味に注目する", dimension: "SN" }, // Inverted
+  { id: 12, text: "問題を解決するとき、実証済みの方法を好む", dimension: "SN" },
+  // T/F Questions (High score = T, Low score = F)
+  { id: 21, text: "決断をするとき、人々の感情よりも論理的な分析を重視する", dimension: "TF" },
+  { id: 22, text: "議論において、調和を保つより真実を追求することを重視する", dimension: "TF" },
+  // J/P Questions (High score = J, Low score = P)
+  { id: 31, text: "予定や計画を事前に立てることを好む", dimension: "JP" },
+  { id: 32, text: "締め切り直前よりも早めに作業を完了させたい", dimension: "JP" },
+];
 
 
 export interface Answer {
